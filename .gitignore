@@ -7,3 +7,9 @@ __pycache__/
 .vscode/
 data/
 	
+#Scraper output
+scraped_data.json
+
+#AWS CLI installation files
+aws/
+awscliv2.zip
