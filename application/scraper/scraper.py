@@ -22,13 +22,31 @@ class CarScraper:
     def parse(self, html):
         soup = BeautifulSoup(html, "html.parser")
 
-        title = soup.title.string if soup.title else "No title"
+        listings = []
+
+        for card in soup.select(".car-listing"):
+            title = card.select_one(".title")
+            price = card.select_one(".price")
+            mileage = card.select_one(".mileage")
+            location = card.select_one(".location")
+
+            listing = {
+                "title": title.get_text(strip=True) if title else None,
+                "price": price.get_text(strip=True) if price else None,
+                "mileage": mileage.get_text(strip=True) if mileage else None,
+                "location": location.get_text(strip=True) if location else None,
+                "source": self.url
+            }
+
+            listings.append(listing)
 
         return {
             "source": self.url,
-            "title": title.strip()
+            "total_listings": len(listings),
+            "listings": listings
         }
 
     def run(self):
         html = self.fetch_page()
         return self.parse(html)
+
