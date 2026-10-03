@@ -13,3 +13,10 @@ scraped_data.json
 #AWS CLI installation files
 aws/
 awscliv2.zip
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
