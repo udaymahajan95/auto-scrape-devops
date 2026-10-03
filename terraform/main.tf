@@ -15,5 +15,5 @@ provider "aws"{
 }
 
 resource "aws_s3_bucket" "scraping_data" {
-   bucket = "auto-scrape-devops-bucket-986156380297"
+   bucket = "auto-scrape-devops-bucket"
 }
