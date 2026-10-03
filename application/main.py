@@ -5,7 +5,7 @@ import boto3
 from scraper.scraper import CarScraper
 
 
-BUCKET_NAME = "auto-scrape-devops-bucket"
+BUCKET_NAME = "auto-scrape-devops-bucket-986156380297"
 S3_KEY = "automotive/scraped_data.json"
 
 
