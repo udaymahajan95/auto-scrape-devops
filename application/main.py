@@ -10,9 +10,7 @@ S3_KEY = "automotive/scraped_data.json"
 
 
 def upload_to_s3(file_path):
-    session = boto3.Session(profile_name="autoscrape")
-    s3 = session.client("s3")
-
+    s3 = boto3.client("s3")
     s3.upload_file(
         file_path,
         BUCKET_NAME,
