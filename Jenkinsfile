@@ -5,6 +5,14 @@ pipeline {
         timestamps()
     }
 
+    environment {
+        AWS_REGION = 'us-east-1'
+        ECR_REPOSITORY = 'auto-scrape-devops'
+        AWS_ACCOUNT_ID = '986156380297'
+        IMAGE_TAG = "${BUILD_NUMBER}"
+        ECR_REGISTRY = '986156380297.dkr.ecr.us-east-1.amazonaws.com'
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -27,7 +35,33 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 sh '''
-                    docker build -t auto-scrape-devops:${BUILD_NUMBER} .
+                    docker build \
+                      -t ${ECR_REPOSITORY}:${IMAGE_TAG} .
+                '''
+            }
+        }
+
+        stage('Login to Amazon ECR') {
+            steps {
+                sh '''
+                    aws ecr get-login-password \
+                      --region ${AWS_REGION} \
+                    | docker login \
+                      --username AWS \
+                      --password-stdin ${ECR_REGISTRY}
+                '''
+            }
+        }
+
+        stage('Push Image to ECR') {
+            steps {
+                sh '''
+                    docker tag \
+                      ${ECR_REPOSITORY}:${IMAGE_TAG} \
+                      ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
+
+                    docker push \
+                      ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
                 '''
             }
         }
@@ -35,10 +69,10 @@ pipeline {
 
     post {
         success {
-            echo 'AutoScrape CI pipeline completed successfully!'
+            echo "Pipeline successful. Published image: ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}"
         }
         failure {
-            echo 'AutoScrape CI pipeline failed. Check the stage logs.'
+            echo 'AutoScrape CI/CD pipeline failed. Check the stage logs.'
         }
     }
 }
